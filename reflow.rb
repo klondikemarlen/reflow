@@ -50,36 +50,3 @@ class Flow
     [safe_line, extra]
   end
 end
-
-
-long_lines = <<~EOS
-  Code abstraction engine. Sort of like "reverse" templating. The abstraction engine analyzes your
-  code
-  for similarity (sort of like a file/diff tool) and then makes a series of templates that would
-EOS
-
-flow = Flow.new(long_lines)
-puts flow.reflowed
-puts
-puts flow.reflowed(40)
-puts
-puts flow.reflowed(120)
-
-fail unless flow.reflowed(80) == <<~EOS
-  Code abstraction engine. Sort of like "reverse" templating. The abstraction
-  engine analyzes your code for similarity (sort of like a file/diff tool) and
-  then makes a series of templates that would
-EOS
-
-fail unless flow.reflowed(40) == <<~EOS
-  Code abstraction engine. Sort of like
-  "reverse" templating. The abstraction
-  engine analyzes your code for similarity
-  (sort of like a file/diff tool) and then
-  makes a series of templates that would
-EOS
-
-fail unless flow.reflowed(120) == <<~EOS
-  Code abstraction engine. Sort of like "reverse" templating. The abstraction engine analyzes your code for similarity
-  (sort of like a file/diff tool) and then makes a series of templates that would
-EOS
