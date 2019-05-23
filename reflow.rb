@@ -26,32 +26,32 @@ long_lines = <<~EOC
 EOC
 
 class Flow
-  def initialize(ctx, size=80)
+  def initialize(ctx, margin=80)
     @ctx = ctx
-    @size = size
+    @margin = margin
   end
 
-  def reflow
+  def reflowed(margin=@margin)
     extra = ''
     reflowed_lines = []
     @ctx.lines do |line|
-      line, extra = shorten(extra + line)
       begin
+        line, extra = shorten(extra + line, margin)
         reflowed_lines.push line unless line.empty?
-        line, extra = shorten(extra)
-      end until extra.length <= @size
+        line = ''
+      end until extra.length <= margin
       reflowed_lines.push line unless line.empty?
     end
     reflowed_lines.push extra unless extra.empty?
     reflowed_lines.join("\n")
   end
 
-  def shorten(line)
+  def shorten(line, margin=@margin)
     # puts "Line to shorten: " + line.dump
-    if line.length <= @size
+    if line.length <= margin
       return '', line.strip() + ' '
     end
-    first_space_before_size = line[0..@size].rindex(' ')
+    first_space_before_size = line[0..margin].rindex(' ')
     safe_line = line[0..first_space_before_size]
     extra = line[first_space_before_size..-1].strip() + ' '
     [safe_line, extra]
@@ -59,4 +59,8 @@ class Flow
 end
 
 flow = Flow.new(long_lines)
-puts flow.reflow
+puts flow.reflowed
+puts
+puts flow.reflowed(40)
+puts
+puts flow.reflowed(120)
