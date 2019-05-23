@@ -19,12 +19,6 @@ then makes a series of templates that would
 
 =end
 
-long_lines = <<~EOC
-  Code abstraction engine. Sort of like "reverse" templating. The abstraction engine analyzes your
-  code
-  for similarity (sort of like a file/diff tool) and then makes a series of templates that would
-EOC
-
 class Flow
   def initialize(ctx, margin=80)
     @ctx = ctx
@@ -40,23 +34,29 @@ class Flow
         reflowed_lines.push line unless line.empty?
         line = ''
       end until extra.length <= margin
-      reflowed_lines.push line unless line.empty?
     end
-    reflowed_lines.push extra unless extra.empty?
+    reflowed_lines.push extra.strip unless extra.empty?
     reflowed_lines.join("\n")
   end
 
   def shorten(line, margin=@margin)
     # puts "Line to shorten: " + line.dump
     if line.length <= margin
-      return '', line.strip() + ' '
+      return '', line.strip + ' '
     end
     first_space_before_size = line[0..margin].rindex(' ')
-    safe_line = line[0..first_space_before_size]
-    extra = line[first_space_before_size..-1].strip() + ' '
+    safe_line = line[0...first_space_before_size]
+    extra = line[first_space_before_size..-1].strip + ' '
     [safe_line, extra]
   end
 end
+
+
+long_lines = <<~EOS
+  Code abstraction engine. Sort of like "reverse" templating. The abstraction engine analyzes your
+  code
+  for similarity (sort of like a file/diff tool) and then makes a series of templates that would
+EOS
 
 flow = Flow.new(long_lines)
 puts flow.reflowed
@@ -64,3 +64,22 @@ puts
 puts flow.reflowed(40)
 puts
 puts flow.reflowed(120)
+
+fail unless flow.reflowed(80) == <<~EOS
+  Code abstraction engine. Sort of like "reverse" templating. The abstraction
+  engine analyzes your code for similarity (sort of like a file/diff tool) and
+  then makes a series of templates that would
+EOS
+
+fail unless flow.reflowed(40) == <<~EOS
+  Code abstraction engine. Sort of like
+  "reverse" templating. The abstraction
+  engine analyzes your code for similarity
+  (sort of like a file/diff tool) and then
+  makes a series of templates that would
+EOS
+
+fail unless flow.reflowed(120) == <<~EOS
+  Code abstraction engine. Sort of like "reverse" templating. The abstraction engine analyzes your code for similarity
+  (sort of like a file/diff tool) and then makes a series of templates that would
+EOS
