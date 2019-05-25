@@ -8,7 +8,7 @@ long_lines = <<~EOC
   for similarity (sort of like a file/diff tool) and then makes a series of templates that would
 EOC
 
-flow = Flow.new(long_lines)
+flow = TextFlow.new(long_lines)
 ```
 `puts flow.reflowed` becomes
 ```

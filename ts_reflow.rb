@@ -9,7 +9,7 @@ class TestReflow < Test::Unit::TestCase
       for similarity (sort of like a file/diff tool) and then makes a series of templates that would
     EOS
 
-    @flow = Flow.new(long_lines)
+    @flow = TextFlow.new(long_lines)
   end
 
   def test_reflow_default_80
@@ -38,5 +38,23 @@ class TestReflow < Test::Unit::TestCase
       (sort of like a file/diff tool) and then makes a series of templates that would
     EOS
     assert_equal(@flow.reflowed(120), margin_120_flow)
+  end
+
+  def test_nospace_line
+    long_lines = <<~EOS
+      Number of Phones of Most Languages to be 37 Phonemes, 25 Consonants, 6 Diphthongs, 9 Vowels see
+      https://www.eupedia.com/linguistics/number_of_phonemes_in_european_languages.shtml
+      analysed in LibreCalc :) I guess I would like my code to be pronounceable? :P
+      I would like to think that this
+    EOS
+
+    expected_textflow = <<~EOS
+      Number of Phones of Most Languages to be 37 Phonemes, 25 Consonants, 6
+      Diphthongs, 9 Vowels see https://www.eupedia.com/linguistics/number_of_phonemes_
+      in_european_languages.shtml analysed in LibreCalc :) I guess I would like my
+      code to be pronounceable? :P I would like to think that this
+    EOS
+    flow = TextFlow.new(long_lines)
+    assert_equal(flow.reflowed, expected_textflow)
   end
 end
