@@ -48,13 +48,13 @@ class TestReflow < Test::Unit::TestCase
       I would like to think that this
     EOS
 
-    expected_textflow = <<~EOS
+    smart_hard_break = <<~EOS
       Number of Phones of Most Languages to be 37 Phonemes, 25 Consonants, 6
       Diphthongs, 9 Vowels see https://www.eupedia.com/linguistics/number_of_phonemes_
       in_european_languages.shtml analysed in LibreCalc :) I guess I would like my
       code to be pronounceable? :P I would like to think that this
     EOS
     flow = TextFlow.new(long_lines)
-    assert_equal(flow.reflowed, expected_textflow)
+    assert_equal(flow.reflowed, smart_hard_break)
   end
 end

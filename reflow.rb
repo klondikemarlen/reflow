@@ -42,20 +42,26 @@ class TextFlow
   end
 
   def reflowed(margin=@margin)
-    extra = ''
-    reflowed_lines = []
-    @ctx.lines do |line|
-      begin
-        line, extra = resize(extra + line, margin)
-        reflowed_lines.push line unless line.empty?
-        line = ''
-      end until extra.length <= margin
-    end
-    reflowed_lines.push extra.strip unless extra.empty?
+    reflowed_lines = break_lines(margin)
     reflowed_lines.join("\n")
   end
 
-  def resize(line, margin=@margin)
+  def break_lines(margin)
+    extra = ''
+    reflowed_lines = []
+    for line in @ctx.lines
+      # branch? line a, line b compare?
+      begin
+          line, extra = resize(extra + line, margin)
+          reflowed_lines.push line unless line.empty?
+          line = ''
+        end until extra.length <= margin
+    end
+    reflowed_lines.push extra.strip unless extra.empty?
+    reflowed_lines
+  end
+
+  def resize(line, margin)
     if line.length <= margin
       return '', line.strip + ' '
     end
