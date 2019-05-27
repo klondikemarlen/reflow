@@ -1,11 +1,15 @@
-# accept file
-# modify it line by line? Or 2-3 lines at a time?
-# check for lines that are longer than 80 chars.
-# reflow the text leaving at least 2 words on the next line
-# (before sentence ends)
-
-# example
 =begin
+
+1. accept file
+2. modify it line by line? Or 2-3 lines at a time?
+3. check for lines that are longer than 80 chars.
+  a. if line is longer than 80 chars split at space.
+  b. if next line has no spaces and is longer than 80 chars split first line
+    hard at 80 chars.
+  This might require a context fork ... do both and see which one looks better
+    then discard the other?
+4. reflow the text leaving at least 2 words on the next line
+(before sentence ends)
 
 e.g.
 Code abstraction engine. Sort of like "reverse" templating. The abstraction engine analyzes your
