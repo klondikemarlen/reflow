@@ -18,7 +18,7 @@ class TestReflow < Test::Unit::TestCase
       engine analyzes your code for similarity (sort of like a file/diff tool) and
       then makes a series of templates that would
     EOS
-    assert_equal(@flow.reflowed, margin_80_flow)
+    assert_equal(margin_80_flow, @flow.reflowed)
   end
 
   def test_reflow_40
@@ -29,7 +29,7 @@ class TestReflow < Test::Unit::TestCase
       (sort of like a file/diff tool) and then
       makes a series of templates that would
     EOS
-    assert_equal(@flow.reflowed(40), margin_40_flow)
+    assert_equal(margin_40_flow, @flow.reflowed(40))
   end
 
   def test_reflow_120
@@ -37,7 +37,7 @@ class TestReflow < Test::Unit::TestCase
       Code abstraction engine. Sort of like "reverse" templating. The abstraction engine analyzes your code for similarity
       (sort of like a file/diff tool) and then makes a series of templates that would
     EOS
-    assert_equal(@flow.reflowed(120), margin_120_flow)
+    assert_equal(margin_120_flow, @flow.reflowed(120))
   end
 
   def test_nospace_line
@@ -55,6 +55,25 @@ class TestReflow < Test::Unit::TestCase
       code to be pronounceable? :P I would like to think that this
     EOS
     flow = TextFlow.new(long_lines)
-    assert_equal(flow.reflowed, smart_hard_break)
+    assert_equal(smart_hard_break, flow.reflowed)
+  end
+
+  def test_avoid_overstriping
+    long_lines = <<~EOS
+      (or heating) coil connecting, a filter, a battery and a liquid mix. You could even caffinate the fluid so as the get your daily caffiene hit.
+
+      A non-profit bank. The Peoples Bank of Canada. Open source distributed conversation
+    EOS
+
+    overstriping_avoided = <<~EOS
+      (or heating) coil connecting, a filter, a battery and a liquid mix. You could
+      even caffinate the fluid so as the get your daily caffiene hit.
+
+      A non-profit bank. The Peoples Bank of Canada. Open source distributed
+      conversation
+    EOS
+
+    flow = TextFlow.new(long_lines)
+    assert_equal(overstriping_avoided, flow.reflowed)
   end
 end
