@@ -1,15 +1,17 @@
-require_relative 'reflow'
 require 'test/unit'
+require 'pry'
+
+require_relative 'reflow'
 
 
 class TestReflow < Test::Unit::TestCase
   def setup
-    long_lines = <<~EOS
+    original_text = <<~EOS
       Code abstraction engine. Sort of like "reverse" templating. The abstraction engine analyzes your code
       for similarity (sort of like a file/diff tool) and then makes a series of templates that would
     EOS
 
-    @flow = TextFlow.new(long_lines)
+    @flow = TextFlow.new(original_text)
   end
 
   def test_reflow_default_80
@@ -41,7 +43,7 @@ class TestReflow < Test::Unit::TestCase
   end
 
   def test_nospace_line
-    long_lines = <<~EOS
+    original_text = <<~EOS
       Number of Phones of Most Languages to be 37 Phonemes, 25 Consonants, 6 Diphthongs, 9 Vowels see
       https://www.eupedia.com/linguistics/number_of_phonemes_in_european_languages.shtml
       analysed in LibreCalc :) I guess I would like my code to be pronounceable? :P
@@ -54,12 +56,13 @@ class TestReflow < Test::Unit::TestCase
       in_european_languages.shtml analysed in LibreCalc :) I guess I would like my
       code to be pronounceable? :P I would like to think that this
     EOS
-    flow = TextFlow.new(long_lines)
+    flow = TextFlow.new(original_text)
+    # binding.pry
     assert_equal(smart_hard_break, flow.reflowed)
   end
 
   def test_avoid_overstriping
-    long_lines = <<~EOS
+    original_text = <<~EOS
       (or heating) coil connecting, a filter, a battery and a liquid mix. You could even caffinate the fluid so as the get your daily caffiene hit.
 
       A non-profit bank. The Peoples Bank of Canada. Open source distributed conversation
@@ -73,7 +76,7 @@ class TestReflow < Test::Unit::TestCase
       conversation
     EOS
 
-    flow = TextFlow.new(long_lines)
+    flow = TextFlow.new(original_text)
     assert_equal(overstriping_avoided, flow.reflowed)
   end
 end

@@ -24,56 +24,63 @@ then makes a series of templates that would
 =end
 require 'pry'
 
-class String
-  def rsplit(pattern=nil, limit=nil)
-    array = self.split(pattern)
-    left = array[0...-limit].join(pattern)
-    right_spits = array[-limit..]
-    return [left] + right_spits
-  end
-end
-
 class TextFlow
   DEFAULT_MARGIN = 80
 
-  def initialize(ctx, margin=DEFAULT_MARGIN)
-    @ctx = ctx
+  def initialize(text, margin=DEFAULT_MARGIN)
+    @text = text
     @margin = margin
   end
 
   def reflowed(margin=@margin)
-    reflowed_lines = break_lines(margin)
+    reflowed_lines = []
+    working_text = ''
+    for line in @text.each_line
+      working_text += line
+      while working_text.length > margin
+        new_line, working_text = break_line(working_text, margin)
+        reflowed_lines.push(new_line)
+      end
+    end
+    # push any left over text
+    reflowed_lines.push(working_text[0...-1])
     reflowed_lines.join("\n")
   end
 
-  def break_lines(margin)
-    extra = ''
-    reflowed_lines = []
-    for line in @ctx.lines
-      # branch? line a, line b compare?
-      begin
-          line, extra = resize(extra + line, margin)
-          reflowed_lines.push line unless line.empty?
-          line = ''
-        end until extra.length <= margin
+  def break_line(line, margin)
+    current_line_break = line.index("\n")
+    if current_line_break <= margin
+      line[current_line_break] = ' '
     end
-    reflowed_lines.push extra.strip unless extra.empty?
-    reflowed_lines
-  end
 
-  def resize(line, margin)
-    if line.length <= margin
-      return '', line.strip + ' '
-    end
-    first_space_before_size = line[0..margin].rindex(' ')  || margin
-    safe_line = line[0...first_space_before_size]
-    extra = line[first_space_before_size..-1].strip + ' '
-    [safe_line, extra]
+    # normal work breaking
+    word_break = line[0..margin].rindex(' ') || margin
+    new_line = line[0...word_break]
+    extra = line[word_break + 1..-1]
+
+    # space_break = extra.rindex(' ')
+    # if !space_break || space_break > margin
+    #   # special break, prevent breaking to early
+    #   new_line = line[0...margin]
+    #   extra = line[margin..-1]
+    # end
+
+    return new_line, extra
   end
 end
 
+
 if __FILE__ == $0
   require 'pathname'
+
+  class String
+    def rsplit(pattern=nil, limit=nil)
+      array = self.split(pattern)
+      left = array[0...-limit].join(pattern)
+      right_spits = array[-limit..]
+      return [left] + right_spits
+    end
+  end
 
   return unless not ARGV[0].nil?
   path = Pathname.new(ARGV[0])
