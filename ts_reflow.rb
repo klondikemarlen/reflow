@@ -1,11 +1,11 @@
 require_relative 'reflow'
 require 'test/unit'
 
+
 class TestReflow < Test::Unit::TestCase
   def setup
     long_lines = <<~EOS
-      Code abstraction engine. Sort of like "reverse" templating. The abstraction engine analyzes your
-      code
+      Code abstraction engine. Sort of like "reverse" templating. The abstraction engine analyzes your code
       for similarity (sort of like a file/diff tool) and then makes a series of templates that would
     EOS
 
