@@ -42,25 +42,6 @@ class TestReflow < Test::Unit::TestCase
     assert_equal(margin_120_flow, @flow.reflowed(120))
   end
 
-  def test_nospace_line
-    original_text = <<~EOS
-      Number of Phones of Most Languages to be 37 Phonemes, 25 Consonants, 6 Diphthongs, 9 Vowels see
-      https://www.eupedia.com/linguistics/number_of_phonemes_in_european_languages.shtml
-      analysed in LibreCalc :) I guess I would like my code to be pronounceable? :P
-      I would like to think that this
-    EOS
-
-    smart_hard_break = <<~EOS
-      Number of Phones of Most Languages to be 37 Phonemes, 25 Consonants, 6
-      Diphthongs, 9 Vowels see https://www.eupedia.com/linguistics/number_of_phonemes_
-      in_european_languages.shtml analysed in LibreCalc :) I guess I would like my
-      code to be pronounceable? :P I would like to think that this
-    EOS
-    flow = TextFlow.new(original_text)
-    # binding.pry
-    assert_equal(smart_hard_break, flow.reflowed)
-  end
-
   def test_avoid_overstriping
     original_text = <<~EOS
       (or heating) coil connecting, a filter, a battery and a liquid mix. You could even caffinate the fluid so as the get your daily caffiene hit.
@@ -78,5 +59,24 @@ class TestReflow < Test::Unit::TestCase
 
     flow = TextFlow.new(original_text)
     assert_equal(overstriping_avoided, flow.reflowed)
+  end
+
+  def test_nospace_line
+    original_text = <<~EOS
+      Number of Phones of Most Languages to be 37 Phonemes, 25 Consonants, 6 Diphthongs, 9 Vowels see
+      https://www.eupedia.com/linguistics/number_of_phonemes_in_european_languages.shtml
+      analysed in LibreCalc :) I guess I would like my code to be pronounceable? :P
+      I would like to think that this
+    EOS
+
+    smart_hard_break = <<~EOS
+      Number of Phones of Most Languages to be 37 Phonemes, 25 Consonants, 6
+      Diphthongs, 9 Vowels see https://www.eupedia.com/linguistics/number_of_phonemes_
+      in_european_languages.shtml analysed in LibreCalc :) I guess I would like my
+      code to be pronounceable? :P I would like to think that this
+    EOS
+    flow = TextFlow.new(original_text)
+    # binding.pry
+    assert_equal(smart_hard_break, flow.reflowed)
   end
 end
