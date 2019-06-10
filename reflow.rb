@@ -26,16 +26,24 @@ require 'pry'
 
 class TextFlow
   DEFAULT_MARGIN = 80
+  LINE_BREAK_FORMAT = %r{
+    (?<=[^.:?!])  # break when not proceeded by sentence terminators
+    (\r\n|\n)     # match line speparators
+    \z            # if at the end of the string, possibly irrelavant
+  }x
 
   def initialize(text, margin=DEFAULT_MARGIN)
     @text = text
     @margin = margin
+
+    # detect current margin?
   end
 
   def reflowed(margin=@margin)
     reflowed_lines = []
     working_text = ''
     for line in @text.each_line
+      line.gsub!(LINE_BREAK_FORMAT, ' ')
       working_text += line
       while working_text.length > margin
         new_line, working_text = break_line(working_text, margin)
@@ -48,22 +56,17 @@ class TextFlow
   end
 
   def break_line(line, margin)
-    current_line_break = line.index("\n")
-    if current_line_break <= margin
-      line[current_line_break] = ' '
-    end
-
     # normal work breaking
     word_break = line[0..margin].rindex(' ') || margin
     new_line = line[0...word_break]
     extra = line[word_break + 1..-1]
 
-    # space_break = extra.rindex(' ')
-    # if !space_break || space_break > margin
-    #   # special break, prevent breaking to early
-    #   new_line = line[0...margin]
-    #   extra = line[margin..-1]
-    # end
+    # special break, prevent breaking to early
+    space_break = extra[0..margin].rindex(' ')
+    if space_break.nil? || space_break > margin
+      new_line = line[0...margin]
+      extra = line[margin..-1]
+    end
 
     return new_line, extra
   end

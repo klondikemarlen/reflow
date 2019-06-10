@@ -35,10 +35,12 @@ class TestReflow < Test::Unit::TestCase
   end
 
   def test_reflow_120
+    # my code currently can't expand a hardbroken margin.
     margin_120_flow = <<~EOS.strip
       Code abstraction engine. Sort of like "reverse" templating. The abstraction engine analyzes your code for similarity
       (sort of like a file/diff tool) and then makes a series of templates that would
     EOS
+    # binding.pry
     assert_equal(margin_120_flow, @flow.reflowed(120))
   end
 
@@ -58,6 +60,7 @@ class TestReflow < Test::Unit::TestCase
     EOS
 
     flow = TextFlow.new(original_text)
+    # binding.pry
     assert_equal(overstriping_avoided, flow.reflowed)
   end
 
